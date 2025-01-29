@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Button Component
+const Button = ({ handleClick, text }) => (
+  <button
+    onClick={handleClick}
+    style={{
+      padding: '10px 20px',
+      margin: '5px',
+      fontSize: '1rem',
+      cursor: 'pointer',
+    }}
+  >
+    {text}
+  </button>
+);
+
+// StatisticLine Component
+const StatisticLine = ({ text, value }) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
+);
+
+// Statistics Component
+const Statistics = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+  const average = total === 0 ? 0 : (good - bad) / total;
+  const positivePercentage = total === 0 ? 0 : (good / total) * 100;
+
+  if (total === 0) {
+    return <p>No feedback given</p>;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '50%' }}>
+      <tbody>
+        <StatisticLine text="Good" value={good} />
+        <StatisticLine text="Neutral" value={neutral} />
+        <StatisticLine text="Bad" value={bad} />
+        <StatisticLine text="Total" value={total} />
+        <StatisticLine text="Average" value={average.toFixed(2)} />
+        <StatisticLine text="Positive" value={`${positivePercentage.toFixed(2)}%`} />
+      </tbody>
+    </table>
+  );
+};
 
-export default App
+// Main App Component
+const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Give Feedback</h1>
+
+      <div>
+        <Button handleClick={() => setGood(good + 1)} text="Good" />
+        <Button handleClick={() => setNeutral(neutral + 1)} text="Neutral" />
+        <Button handleClick={() => setBad(bad + 1)} text="Bad" />
+      </div>
+
+      <h2>Statistics</h2>
+      <Statistics good={good} neutral={neutral} bad={bad} />
+    </div>
+  );
+};
+
+export default App;
